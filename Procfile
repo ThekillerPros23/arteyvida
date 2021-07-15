@@ -1,1 +1,1 @@
-web : vendor/bin /heroku-web-app
+web : vendor/bin /heroku-web-a
