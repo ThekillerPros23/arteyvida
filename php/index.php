@@ -1,7 +1,17 @@
-<?php
+<!DOCTYPE HTML>
+<html>
+
+<head>
+</head>
+
+<body>
+        <header>
+        </header>
+        <?php
         $name = $_POST["email"];
         $password = $_POST["contraseña"];
-        echo $name;
-        echo $password;
-        echo `<a href = ""><p>{$name}</p></a>`;
-?>
+        echo '<a href = "/home"><p></p></a>';
+        ?>
+</body>
+
+</html>

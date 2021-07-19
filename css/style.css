@@ -1,108 +1,154 @@
-*
-{
-    margin:0;
+* {
+    margin: 0;
     padding: 0;
 }
-a:hover{
-    color:blue;
-}
-.navegacion a{
-    color:white;
-}
-link{
-    border:solid 15px lime;
-    border-radius: 50px;
-}
-.navegacion{
+
+
+/*  Estilizacion de los header*/
+
+.navegacion {
     display: flex;
-    padding: 5px;
     border-radius: 35px;
-    border: solid  10px limegreen;
+    border: solid 10px limegreen;
     background-color: green;
-    height:fit-content;
+    height: fit-content;
     font-size: 30px;
     font-family: 'Times New Roman', Times, serif;
 }
 
-.gallery{
+.text
+{
+   
+   display: flex;
+   justify-content: space-evenly;
+
+}
+
+.navegacion a {
+    color: white;
+    display: flex;
+    justify-content: space-around;
+}
+
+a:hover {
+    color: blue;
+}
+
+.logo-img img {
+    transform: translateX(0%);
+    border-radius: 100px;
+    height: 100px;
+    width: 90px;
+    border: solid 2px lime;
+}
+
+
+/* Estilos del contenido */
+
+.content div {
+    font-size: 20px;
+    font-family: sans-serif;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    border-radius: 30px;
+    border: solid 3px;
+}
+
+.content img {
+    border: solid 5px lime;
+    display: flex;
+    border-radius: 25px;
+    width: 300px;
+    height: 300px;
+    justify-content: end;
+}
+
+.gallery {
     display: flex;
     justify-content: flex-around;
     height: 500px;
 }
 
-.gallery div{
+.gallery div {
     background-color: green;
     width: 500px;
     margin: 50px;
     border: solid 10px lime;
 }
-.navegacion img {
-    transform: translateX(0%);
-    border-radius: 100px;
-    height: 100px;
-    width: 90px;
-    border:solid 2px lime;
-}
 
 .new {
     background-color: lime;
-
 }
 
-.gallery img{
+.gallery img {
     height: 180px;
     width: 190px;
 }
-.gallery a:hover{
+
+.gallery a:hover {
     height: 30px;
     border: solid 10px green;
 }
 
-.data1 img{
-   display: flex;
-   justify-content: space-around;
-}
-.facebook div
-{
-    font-size: 20px;
-    font-family: sans-serif;
+.data1 img {
     display: flex;
-    flex-wrap: wrap; 
     justify-content: space-around;
-    border-radius: 30px ;
-    border: solid 3px;
 }
 
-.formulario input
-{
-    color:white;
-    font-family: Arial, Helvetica, sans-serif ;
+.formulario input {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
     width: 600px;
     height: 50px;
-    border: solid  5px green ;
+    border: solid 5px green;
     border-radius: 30px;
     display: flex;
     justify-content: space-around;
     background-color: lime;
-
+    transform: translateX(50%);
 }
-.formulario input.data{
-    font-family: Arial, Helvetica, sans-serif ;
+
+.formulario input.data {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
     width: 600px;
     height: 300px;
-    border: solid  5px green ;
+    color: white;
+    border: solid 5px green;
     border-radius: 30px;
     display: flex;
     justify-content: space-around;
     background-color: lime;
 }
-.facebook  img{
-    border: solid 5px lime;
-    display:flex;
-    border-radius: 25px;
-    width: 300px;
+
+.data {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    width: 600px;
     height: 300px;
-    justify-content: end;
+    border: solid 5px green;
+    border-radius: 30px;
+    display: flex;
+    transform: translateX(50%);
+    justify-content: space-around;
+    background-color: lime;
+    text-align: center;
+    color: white;
+}
+/* button styles */
+button{
+    text-align: center;
+    color: white;
+    font-family: sans-serif;
+    font-size: 50px;
+    transform: translateX(150%);
+    display: flex;
+    height: 80px;
+    width: 300px;
+    border-radius: 30px;
+    background-color: lime;
+    border: solid 2px green;
 }
