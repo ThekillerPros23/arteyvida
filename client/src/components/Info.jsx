@@ -8,7 +8,13 @@ const Info = () => {
         <p className="text-xl text-center bg-im">
           Somos una empresa dedicada a la jardineria nos comprometemos a brindar
           todo lo que nesecitan tus plantas
-        </p>
+          </p>
+          <div className="py-44">
+          <p className = "text-xl text-center bg-im ">
+              Estamos haciendo lo mejor para ustedes y aprendan las cosas necesarias en su jardín
+          </p>
+          </div>
+    
       </div>
     </div>
   );

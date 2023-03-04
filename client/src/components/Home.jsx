@@ -7,16 +7,9 @@ import img5 from "../assets/img6.jpg";
 
 const Home = () => {
   return (
-    <div className="bg-slate-400 px-8 py-8">
-  
-      <div className="grid grid-cols-3">
-        <img className="h-80  px-5 py-5  " src={img}></img>
-
-        <img className="h-80 px-5 py-5 " src={img1}></img>
-        <img className="h-80 px-5 py-5 " src={img2}></img>
-        <img className="h-80 px-5 py-5" src={img3}></img>
-        <img className="h-80 px-5 py-5" src={img4}></img>
-        <img className="h-80 px-5 py-5 " src={img5}></img>
+    <div className="bg-slate-400  bg-center h-screen">
+      <div className="h-96 w-full">
+        <img src={img} className="w-full h-full "></img>
       </div>
     </div>
   );
