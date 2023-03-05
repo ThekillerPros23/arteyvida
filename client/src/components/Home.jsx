@@ -11,6 +11,9 @@ const Home = () => {
       <div className="h-96 w-full">
         <img src={img} className="w-full h-full "></img>
       </div>
+      <div>
+        <img src={img1} className="w-full h-full"></img>
+      </div>
     </div>
   );
 };

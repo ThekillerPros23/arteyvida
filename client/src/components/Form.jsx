@@ -27,6 +27,7 @@ const Form = () => {
             ></input>
           </div>
           <Link to="/dashboard">Submit</Link>
+          <Link to="/newdata">new</Link>
         </form>
       </div>
     </div>
