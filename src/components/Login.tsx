@@ -1,4 +1,4 @@
-import { Button, Table, Modal, TextInput, Label } from "flowbite-react";
+import { Button, Table, Modal, TextInput, Label, Navbar } from "flowbite-react";
 import { Pagination } from "flowbite-react";
 import { useEffect, useState } from "react";
 
@@ -30,12 +30,17 @@ function Login() {
   );
 
   useEffect(() => {
-    fetch("http://localhost:3000/data")
+    fetch("https://arteyvidaserver.onrender.com/data")
       .then((response) => response.json())
       .then((result: Item[]) => {
         setDatos(result);
       });
   }, []);
+
+
+  useEffect(()=>{
+    fetch("")
+  })
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -62,6 +67,14 @@ function Login() {
 
   return (
     <div>
+    <div className="flex list-none justify-center ">
+      <Navbar className="">
+        <Navbar.Link className="mx-4">Gastos</Navbar.Link>
+        <Navbar.Link className="mx-4">Ingresos</Navbar.Link>
+        
+      </Navbar>
+      
+    </div>
       <div>
         <Table>
           <Table.Head>
