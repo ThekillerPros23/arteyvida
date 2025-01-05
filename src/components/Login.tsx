@@ -1,12 +1,19 @@
-import { Button, Table, Modal, TextInput, Label, Navbar } from "flowbite-react";
+import {
+  Button,
+  Table,
+  Modal,
+  TextInput,
+  Label,
+  Navbar,
+} from "flowbite-react";
 import { Pagination } from "flowbite-react";
 import { useEffect, useState } from "react";
 
 // Define la interfaz para los datos
 interface Item {
   nombre: string;
-  email: string;
-  otherField: string;
+  monto: number; // Cambiado de "email" a "monto" y de string a number
+  fecha: string;
 }
 
 function Login() {
@@ -17,8 +24,8 @@ function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newItem, setNewItem] = useState<Item>({
     nombre: "",
-    email: "",
-    otherField: "",
+    monto: 0, // Cambiado de "email" a "monto" y de "" a 0
+    fecha: "",
   });
 
   // Calculating the current data to display based on the current page
@@ -34,13 +41,9 @@ function Login() {
       .then((response) => response.json())
       .then((result: Item[]) => {
         setDatos(result);
-      });
+      })
+      .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
-
-
-  useEffect(()=>{
-    fetch("")
-  })
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -56,38 +59,60 @@ function Login() {
 
   const handleNewItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewItem((prev) => ({ ...prev, [name]: value }));
+    setNewItem((prev) => ({
+      ...prev,
+      [name]: name === "monto" ? parseFloat(value) : value, // Convierte "monto" a número
+    }));
   };
 
-  const handleAddItem = () => {
-    setDatos((prev) => [...prev, newItem]); // Agrega el nuevo ítem al array
-    setNewItem({ nombre: "", email: "", otherField: "" }); // Reiniciar formulario
-    setIsModalOpen(false); // Cerrar el modal
+  const handleAddItem = async () => {
+    try {
+      // Enviar los datos al servidor mediante POST
+      const response = await fetch(
+        "https://arteyvidaserver.onrender.com/sendData",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newItem),
+        }
+      );
+
+      if (response.ok) {
+        const addedItem = await response.json(); // Recibir el objeto insertado del servidor
+        setDatos((prev) => [...prev, addedItem]); // Agregar el nuevo ítem al array de datos
+        setNewItem({ nombre: "", monto: 0, fecha: "" }); // Reiniciar formulario
+        setIsModalOpen(false); // Cerrar el modal
+      } else {
+        console.error("Error al enviar los datos:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
   };
 
   return (
     <div>
-    <div className="flex list-none justify-center ">
-      <Navbar className="">
-        <Navbar.Link className="mx-4">Gastos</Navbar.Link>
-        <Navbar.Link className="mx-4">Ingresos</Navbar.Link>
-        
-      </Navbar>
-      
-    </div>
+      <div className="flex list-none justify-center ">
+        <Navbar className="">
+          <Navbar.Link className="mx-4">Gastos</Navbar.Link>
+          <Navbar.Link className="mx-4">Ingresos</Navbar.Link>
+        </Navbar>
+      </div>
       <div>
         <Table>
           <Table.Head>
             <Table.HeadCell>Nombre </Table.HeadCell>
             <Table.HeadCell>Monto</Table.HeadCell>
-            <Table.HeadCell>Imagenes</Table.HeadCell>
+            <Table.HeadCell>Fecha</Table.HeadCell>
           </Table.Head>
           <Table.Body>
             {currentData.map((item: Item, index) => (
               <Table.Row key={index}>
                 <Table.Cell>{item.nombre}</Table.Cell>
-                <Table.Cell>{item.email}</Table.Cell>
-                <Table.Cell>{item.otherField}</Table.Cell>
+                <Table.Cell>${item.monto.toFixed(2)}</Table.Cell>
+                <Table.Cell>{item.fecha}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
@@ -104,7 +129,6 @@ function Login() {
         <Button onClick={handleModalOpen}>ADD ITEMS</Button>
       </div>
 
-      
       <Modal show={isModalOpen} onClose={handleModalClose}>
         <Modal.Header>Add New Item</Modal.Header>
         <Modal.Body>
@@ -121,25 +145,26 @@ function Login() {
               />
             </div>
             <div className="mb-4">
-              <Label htmlFor="email" value="Email" />
+              <Label htmlFor="monto" value="Monto" />
               <TextInput
-                id="email"
-                name="email"
-                type="email"
-                value={newItem.email}
+                id="monto"
+                name="monto"
+                type="number"
+                step="0.01" // Permite decimales para cantidades de dinero
+                value={newItem.monto.toString()}
                 onChange={handleNewItemChange}
-                placeholder="Enter email"
+                placeholder="Enter amount"
                 required
               />
             </div>
             <div className="mb-4">
-              <Label htmlFor="otherField" value="Other Field" />
+              <Label htmlFor="fecha" value="Fecha" />
               <TextInput
-                id="otherField"
-                name="otherField"
-                value={newItem.otherField}
+                id="fecha"
+                name="fecha"
+                type="date"
+                value={newItem.fecha}
                 onChange={handleNewItemChange}
-                placeholder="Enter other field"
                 required
               />
             </div>
