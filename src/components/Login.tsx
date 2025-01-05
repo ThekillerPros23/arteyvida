@@ -113,26 +113,35 @@ function Login() {
         // Actualizar la lista de datos con el nuevo elemento
         setDatos((prevDatos) => [...prevDatos, newItem]);
 
-        // Cerrar el modal y resetear el formulario
-        handleModalClose();
+        // Resetear el formulario
         setFormData({
           nombreproducto: "",
           monto: 0,
           fecha: "",
         });
+
+        // Cerrar el modal
+        handleModalClose();
       })
       .catch((error) => console.error("Error al insertar los datos:", error));
   };
 
+  // Manejar el refresco de la página al salir del modal
+  const handleAddAndReload = () => {
+    handleFormSubmit();
+    setTimeout(() => {
+      window.location.reload();
+    }, 200); // Espera a que se cierre el modal antes de recargar
+  };
+
   return (
     <div>
-      <div className="flex list-none w-full  justify-center ">
+      <div className="flex list-none w-full justify-center">
         <Navbar>
-          <Navbar.Link className="text-3xl font-extrabold" >GASTOS</Navbar.Link>
-        
+          <Navbar.Link className="text-3xl font-extrabold">GASTOS</Navbar.Link>
         </Navbar>
       </div>
-      <div>
+      <div className="">
         <Table>
           <Table.Head>
             <Table.HeadCell>Nombre Producto</Table.HeadCell>
@@ -203,7 +212,7 @@ function Login() {
           </form>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleFormSubmit}>Add</Button>
+          <Button onClick={handleAddAndReload}>Add</Button>
           <Button color="gray" onClick={handleModalClose}>
             Cancel
           </Button>
