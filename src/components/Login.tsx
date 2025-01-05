@@ -1,230 +1,142 @@
-import { Button, Table, Modal, TextInput, Label, Navbar } from "flowbite-react";
-import { Pagination } from "flowbite-react";
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../auth/FirebaseAuthenticate";
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  UserCredential,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { Spinner } from "flowbite-react"; // Importamos el spinner de Flowbite
 
-// Define la interfaz para los datos
-interface Item {
-  id_cliente?: number; // Incluye id_cliente como opcional
-  nombreproducto: string;
-  monto: number;
-  fecha: string;
-}
+// Carga diferida del componente Menu
+ // Lazy load del menú
 
-function Login() {
-  const [datos, setDatos] = useState<Item[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(true); // Estado para controlar el loading
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState<Item>({
-    nombreproducto: "",
-    monto: 0,
-    fecha: "",
-  });
-
-  // Calcular los datos actuales para paginación
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentData = datos.slice(
-    indexOfFirstItem,
-    Math.min(indexOfLastItem, datos.length)
-  );
-
-  // Obtener datos del backend
   useEffect(() => {
-    fetch("https://arteyvidaserver.onrender.com/data", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al obtener los datos");
-        }
-        return response.json();
-      })
-      .then((result: Item[]) => {
-        const parsedResult = result.map((item) => ({
-          ...item,
-          monto: Number(item.monto), // Asegura que monto sea numérico
-          fecha: item.fecha.split("T")[0], // Asegura que solo se obtenga la fecha
-        }));
-        setDatos(parsedResult);
-      })
-      .catch((error) => console.error("Error al obtener los datos:", error));
-  }, []);
-
-  // Cambiar de página
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  // Abrir modal
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-
-  // Cerrar modal
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  // Manejar cambios en los inputs
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === "monto" ? parseFloat(value) : value,
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("User is logged in:", user);
+        setIsLoading(false); // Deja de mostrar el loading
+        navigate("/menu"); // Redirige al menú si el usuario está autenticado
+      } else {
+        console.log("No user logged in");
+        setIsLoading(false); // Detenemos el loading si no hay usuario autenticado
+      }
     });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  // Función para manejar el inicio de sesión con Google
+  const handleGoogleLogin = async (): Promise<void> => {
+    setIsLoading(true); // Iniciamos el loading
+    const provider = new GoogleAuthProvider();
+    try {
+      const result: UserCredential = await signInWithPopup(auth, provider);
+      console.log("Google Login Success:", result.user);
+      navigate("/menu");
+    } catch (error: any) {
+      setIsLoading(false); // Detenemos el loading en caso de error
+      console.error("Google Login Error:", error.message);
+    }
   };
 
-  // Enviar datos al backend
-  const handleFormSubmit = () => {
-    const formattedFormData = {
-      ...formData,
-      fecha: formData.fecha, // Se asegura de que la fecha esté en formato YYYY-MM-DD
-    };
-
-    fetch("https://arteyvidaserver.onrender.com/Datasend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formattedFormData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al insertar los datos");
-        }
-        return response.json();
-      })
-      .then((newItem: Item) => {
-        // Asegura que solo se incluya la fecha en el formato deseado
-        newItem.fecha = newItem.fecha.split("T")[0];
-
-        // Actualizar la lista de datos con el nuevo elemento
-        setDatos((prevDatos) => [...prevDatos, newItem]);
-
-        // Resetear el formulario
-        setFormData({
-          nombreproducto: "",
-          monto: 0,
-          fecha: "",
-        });
-
-        // Cerrar el modal
-        handleModalClose();
-      })
-      .catch((error) => console.error("Error al insertar los datos:", error));
+  // Función para manejar el inicio de sesión con Facebook
+  const handleFacebookLogin = async (): Promise<void> => {
+    setIsLoading(true); // Iniciamos el loading
+    const provider = new FacebookAuthProvider();
+    try {
+      const result: UserCredential = await signInWithPopup(auth, provider);
+      console.log("Facebook Login Success:", result.user);
+      navigate("/menu");
+    } catch (error: any) {
+      setIsLoading(false); // Detenemos el loading en caso de error
+      console.error("Facebook Login Error:", error.message);
+    }
   };
 
-  // Manejar el refresco de la página al salir del modal
-  const handleAddAndReload = () => {
-    handleFormSubmit();
-    setTimeout(() => {
-      window.location.reload();
-    }, 200); // Espera a que se cierre el modal antes de recargar
+  // Función para manejar el inicio de sesión con Apple
+  const handleAppleLogin = async (): Promise<void> => {
+    setIsLoading(true); // Iniciamos el loading
+    const provider = new OAuthProvider("apple.com");
+    try {
+      const result: UserCredential = await signInWithPopup(auth, provider);
+      console.log("Apple Login Success:", result.user);
+      navigate("/menu");
+    } catch (error: any) {
+      setIsLoading(false); // Detenemos el loading en caso de error
+      console.error("Apple Login Error:", error.message);
+    }
   };
+
+  // Mostrar loading mientras se verifica el estado de autenticación
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <Spinner size="xl" aria-label="Loading spinner" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="flex list-none w-full justify-center">
-        <Navbar>
-          <Navbar.Link className="text-3xl font-extrabold">GASTOS</Navbar.Link>
-        </Navbar>
-      </div>
-      <div className="">
-        <Table>
-          <Table.Head>
-            <Table.HeadCell>Nombre Producto</Table.HeadCell>
-            <Table.HeadCell>Monto</Table.HeadCell>
-            <Table.HeadCell>Fecha</Table.HeadCell>
-          </Table.Head>
-          <Table.Body>
-            {currentData.map((item: Item, index) => (
-              <Table.Row key={index}>
-                <Table.Cell>{item.nombreproducto}</Table.Cell>
-                <Table.Cell>${item.monto.toFixed(2)}</Table.Cell>
-                <Table.Cell>{item.fecha}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      </div>
-      <div className="flex justify-center my-4">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(datos.length / itemsPerPage)}
-          onPageChange={handlePageChange}
-        />
-      </div>
-      <div className="grid grid-cols-1 w-full">
-        <Button onClick={handleModalOpen}>ADD ITEMS</Button>
-      </div>
-
-      <Modal show={isModalOpen} onClose={handleModalClose}>
-        <Modal.Header>Add New Item</Modal.Header>
-        <Modal.Body>
-          <form>
-            <div className="mb-4">
-              <Label htmlFor="nombreproducto" value="Nombre Producto" />
-              <TextInput
-                id="nombreproducto"
-                name="nombreproducto"
-                value={formData.nombreproducto}
-                onChange={handleInputChange}
-                placeholder="Enter product name"
-                required
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <Spinner size="xl" aria-label="Loading spinner" />
+        </div>
+      }
+    >
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+          <h1 className="text-2xl font-bold text-center mb-6">Login / Register</h1>
+          <div className="space-y-4">
+            {/* Botón de Google */}
+            <button
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center py-2 px-4 bg-red-500 text-white font-medium rounded-lg shadow hover:bg-red-600 transition duration-300"
+            >
+              <img
+                src="https://www.svgrepo.com/show/355037/google.svg"
+                alt="Google"
+                className="w-5 h-5 mr-2"
               />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="monto" value="Monto" />
-              <TextInput
-                id="monto"
-                name="monto"
-                type="number"
-                step="0.01"
-                value={formData.monto}
-                onChange={handleInputChange}
-                placeholder="Enter amount"
-                required
+              Sign in with Google
+            </button>
+            {/* Botón de Facebook */}
+            <button
+              onClick={handleFacebookLogin}
+              className="w-full flex items-center justify-center py-2 px-4 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition duration-300"
+            >
+              <img
+                src="https://www.svgrepo.com/show/448255/facebook.svg"
+                alt="Facebook"
+                className="w-5 h-5 mr-2"
               />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="fecha" value="Fecha" />
-              <TextInput
-                id="fecha"
-                name="fecha"
-                type="date"
-                value={formData.fecha}
-                onChange={handleInputChange}
-                required
+              Sign in with Facebook
+            </button>
+            {/* Botón de Apple */}
+            <button
+              onClick={handleAppleLogin}
+              className="w-full flex items-center justify-center py-2 px-4 bg-black text-white font-medium rounded-lg shadow hover:bg-gray-900 transition duration-300"
+            >
+              <img
+                src="https://www.svgrepo.com/show/448268/apple.svg"
+                alt="Apple"
+                className="w-5 h-5 mr-2"
               />
-            </div>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleAddAndReload}>Add</Button>
-          <Button color="gray" onClick={handleModalClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <div className="flex justify-end">
-        <span className="text-lg font-extrabold mx-4">
-          TOTAL EN GASTOS:
-          </span>
-          <span className="text-lg">
-            $
-          {datos.reduce((total, item) => total + item.monto, 0).toFixed(2)}
-          </span>
-          
-       
+              Sign in with Apple
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
-}
+};
 
 export default Login;
