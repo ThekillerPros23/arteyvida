@@ -1,11 +1,4 @@
-import {
-  Button,
-  Table,
-  Modal,
-  TextInput,
-  Label,
-  Navbar,
-} from "flowbite-react";
+import { Button, Table, Modal, TextInput, Label, Navbar } from "flowbite-react";
 import { Pagination } from "flowbite-react";
 import { useEffect, useState } from "react";
 
@@ -218,6 +211,18 @@ function Login() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <div className="flex justify-end">
+        <span className="text-lg font-extrabold mx-4">
+          TOTAL EN GASTOS:
+          </span>
+          <span className="text-lg">
+            $
+          {datos.reduce((total, item) => total + item.monto, 0).toFixed(2)}
+          </span>
+          
+       
+      </div>
     </div>
   );
 }
