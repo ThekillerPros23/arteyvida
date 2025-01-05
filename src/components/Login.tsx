@@ -39,7 +39,7 @@ function Login() {
 
   // Obtener datos del backend
   useEffect(() => {
-    fetch("http://localhost:3000/data", {
+    fetch("https://arteyvidaserver.onrender.com/data", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function Login() {
       fecha: formData.fecha, // Se asegura de que la fecha esté en formato YYYY-MM-DD
     };
 
-    fetch("http://localhost:3000/Datasend", {
+    fetch("https://arteyvidaserver.onrender.com/Datasend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
