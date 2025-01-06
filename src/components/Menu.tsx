@@ -87,6 +87,7 @@ function Menu() {
   // Cerrar modal
   const handleModalClose = () => {
     setIsModalOpen(false);
+    
   };
 
   // Manejar cambios en los inputs
@@ -103,6 +104,7 @@ function Menu() {
     const formattedFormData = {
       ...formData,
       fecha: formData.fecha, // Se asegura de que la fecha esté en formato YYYY-MM-DD
+      
     };
 
     fetch("https://arteyvidaserver.onrender.com/Datasend", {
@@ -129,9 +131,11 @@ function Menu() {
           fecha: "",
         });
 
-        handleModalClose();
+        
       })
       .catch((error) => console.error("Error al insertar los datos:", error));
+      handleModalClose()
+      navigate("/menu")
   };
 
   // Manejar el cierre de sesión
