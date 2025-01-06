@@ -159,9 +159,9 @@ function Menu() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex flex-col md:flex-row justify-between items-center px-6 bg-white shadow-md rounded-md py-4 mb-6">
+      <div className="flex flex-col md:flex-row list-none justify-between items-center px-6 bg-white shadow-md rounded-md py-4 mb-6">
         <Navbar>
-          <Navbar.Link className="text-3xl font-extrabold text-indigo-600">
+          <Navbar.Link className="text-3xl font-extrabold text-indigo-600 ">
             GASTOS
           </Navbar.Link>
         </Navbar>
