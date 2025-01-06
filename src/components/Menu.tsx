@@ -239,7 +239,7 @@ function Menu() {
           </Table.Body>
         </Table>
       </div>
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-4 w-full">
         <Pagination
           currentPage={currentPage}
           totalPages={Math.ceil(datos.length / itemsPerPage)}
