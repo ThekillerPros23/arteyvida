@@ -9,15 +9,17 @@ import {
   Avatar,
 } from "flowbite-react";
 import { Pagination } from "flowbite-react";
-import { HiOutlineSortDescending, HiOutlineSortAscending } from "react-icons/hi";
+import {
+  HiOutlineSortDescending,
+  HiOutlineSortAscending,
+} from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { auth } from "../auth/FirebaseAuthenticate";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-// Define la interfaz para los datos
 interface Item {
-  id_cliente?: number; // Incluye id_cliente como opcional
+  id_cliente?: number;
   nombreproducto: string;
   monto: number;
   fecha: string;
@@ -37,11 +39,10 @@ function Menu() {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Redirigir al login si no hay un usuario autenticado
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        navigate("/"); // Redirige al login si no hay usuario autenticado
+        navigate("/");
       } else {
         setUser(currentUser);
       }
@@ -50,18 +51,19 @@ function Menu() {
     return () => unsubscribe();
   }, [navigate]);
 
-  // Calcular los datos actuales para paginación
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const sortedDatos = sortByMonto !== null
-    ? [...datos].sort((a, b) => sortByMonto ? b.monto - a.monto : a.monto - b.monto)
-    : datos;
+  const sortedDatos =
+    sortByMonto !== null
+      ? [...datos].sort((a, b) =>
+          sortByMonto ? b.monto - a.monto : a.monto - b.monto
+        )
+      : datos;
   const currentData = sortedDatos.slice(
     indexOfFirstItem,
     Math.min(indexOfLastItem, sortedDatos.length)
   );
 
-  // Obtener datos del backend
   useEffect(() => {
     fetch("https://arteyvidaserver.onrender.com/data", {
       method: "GET",
@@ -78,35 +80,26 @@ function Menu() {
       .then((result: Item[]) => {
         const parsedResult = result.map((item) => ({
           ...item,
-          monto: Number(item.monto), // Asegura que monto sea numérico
-          fecha: item.fecha.split("T")[0], // Asegura que solo se obtenga la fecha
+          monto: Number(item.monto),
+          fecha: item.fecha.split("T")[0],
         }));
         setDatos(parsedResult);
       })
       .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
 
-  // Cambiar de página
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Manejar cambio directo de página con dropdown
-  const handleDirectPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrentPage(Number(e.target.value));
-  };
-
-  // Abrir modal
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
 
-  // Cerrar modal
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -115,11 +108,10 @@ function Menu() {
     });
   };
 
-  // Enviar datos al backend
   const handleFormSubmit = () => {
     const formattedFormData = {
       ...formData,
-      fecha: formData.fecha, // Se asegura de que la fecha esté en formato YYYY-MM-DD
+      fecha: formData.fecha,
     };
 
     fetch("https://arteyvidaserver.onrender.com/Datasend", {
@@ -150,26 +142,28 @@ function Menu() {
     handleModalClose();
   };
 
-  // Manejar el cierre de sesión
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigate("/"); // Redirigir al login después de cerrar sesión
+      navigate("/");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
 
-  // Cambiar orden por monto
   const handleSortByMonto = () => {
     setSortByMonto((prevSort) => (prevSort === null ? true : !prevSort));
   };
 
+  const totalMonto = datos.reduce((sum, item) => sum + item.monto, 0);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex list-none w-full justify-between items-center px-6 bg-white shadow-md rounded-md py-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center px-6 bg-white shadow-md rounded-md py-4 mb-6">
         <Navbar>
-          <Navbar.Link className="text-3xl font-extrabold text-indigo-600">GASTOS</Navbar.Link>
+          <Navbar.Link className="text-3xl font-extrabold text-indigo-600">
+            GASTOS
+          </Navbar.Link>
         </Navbar>
         {user && (
           <Dropdown
@@ -187,7 +181,9 @@ function Menu() {
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm font-bold text-gray-700">{user.displayName}</span>
+              <span className="block text-sm font-bold text-gray-700">
+                {user.displayName}
+              </span>
               <span className="block truncate text-sm text-gray-500">
                 {user.email}
               </span>
@@ -198,10 +194,12 @@ function Menu() {
           </Dropdown>
         )}
       </div>
-      <div className="bg-white shadow-md rounded-md p-6 mb-6">
+      <div className="bg-white shadow-md rounded-md p-6 mb-6 overflow-x-auto">
         <Table>
           <Table.Head>
-            <Table.HeadCell className="text-gray-700 font-bold">Nombre Producto</Table.HeadCell>
+            <Table.HeadCell className="text-gray-700 font-bold">
+              Nombre Producto
+            </Table.HeadCell>
             <Table.HeadCell
               onClick={handleSortByMonto}
               className="cursor-pointer text-gray-700 font-bold flex items-center justify-between"
@@ -218,38 +216,35 @@ function Menu() {
           <Table.Body>
             {currentData.map((item: Item, index) => (
               <Table.Row key={index} className="hover:bg-gray-100">
-                <Table.Cell className="text-gray-600">{item.nombreproducto}</Table.Cell>
-                <Table.Cell className="text-gray-600">${item.monto.toFixed(2)}</Table.Cell>
+                <Table.Cell className="text-gray-600">
+                  {item.nombreproducto}
+                </Table.Cell>
+                <Table.Cell className="text-gray-600 w-1/4">
+                  ${item.monto.toFixed(2)}
+                </Table.Cell>
                 <Table.Cell className="text-gray-600">{item.fecha}</Table.Cell>
               </Table.Row>
             ))}
+            <Table.Row className="bg-indigo-100">
+              <Table.Cell
+                className="text-gray-700 font-bold text-right"
+                colSpan={2}
+              >
+                Total
+              </Table.Cell>
+              <Table.Cell className="text-gray-700 font-bold">
+                ${totalMonto.toFixed(2)}
+              </Table.Cell>
+            </Table.Row>
           </Table.Body>
         </Table>
       </div>
-      <div className="flex flex-col md:flex-row justify-center items-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+      <div className="flex justify-center mb-6">
         <Pagination
           currentPage={currentPage}
           totalPages={Math.ceil(datos.length / itemsPerPage)}
           onPageChange={handlePageChange}
         />
-        <div className="flex items-center">
-          <label htmlFor="directPage" className="mr-2 text-gray-700">Go to page:</label>
-          <select
-            id="directPage"
-            value={currentPage}
-            onChange={handleDirectPageChange}
-            className="p-2 border border-gray-300 rounded-md"
-          >
-            {Array.from(
-              { length: Math.ceil(datos.length / itemsPerPage) },
-              (_, i) => i + 1
-            ).map((page) => (
-              <option key={page} value={page}>
-                {page}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
       <div className="flex justify-end mb-6">
         <Button
@@ -260,7 +255,7 @@ function Menu() {
         </Button>
       </div>
 
-      <Modal show={isModalOpen} onClose={handleModalClose}>
+      <Modal show={isModalOpen} onClose={handleModalClose} size="lg">
         <Modal.Header>Add New Item</Modal.Header>
         <Modal.Body>
           <form>
@@ -273,7 +268,7 @@ function Menu() {
                 onChange={handleInputChange}
                 placeholder="Enter product name"
                 required
-                className="border-gray-300 rounded-md"
+                className="border-gray-300 rounded-md w-full"
               />
             </div>
             <div className="mb-4">
@@ -287,7 +282,7 @@ function Menu() {
                 onChange={handleInputChange}
                 placeholder="Enter amount"
                 required
-                className="border-gray-300 rounded-md"
+                className="border-gray-300 rounded-md w-full"
               />
             </div>
             <div className="mb-4">
@@ -299,7 +294,7 @@ function Menu() {
                 value={formData.fecha}
                 onChange={handleInputChange}
                 required
-                className="border-gray-300 rounded-md"
+                className="border-gray-300 rounded-md w-full"
               />
             </div>
           </form>
