@@ -161,9 +161,21 @@ function Menu() {
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex flex-col md:flex-row list-none justify-between items-center px-6 bg-white shadow-md rounded-md py-4 mb-6">
         <Navbar>
-          <Navbar.Link className="text-3xl font-extrabold text-indigo-600 ">
-            GASTOS
-          </Navbar.Link>
+          <Dropdown
+            label={
+              <span className="text-4xl font-bold text-indigo-700 hover:text-indigo-900">
+                GASTOS
+              </span>
+            }
+            inline={true}
+          >
+            <Dropdown.Item onClick={() => navigate("/menu")}>
+              Gastos
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => navigate("/ingresos")}>
+              Ingresos
+            </Dropdown.Item>
+          </Dropdown>
         </Navbar>
         {user && (
           <Dropdown
@@ -211,7 +223,9 @@ function Menu() {
                 <HiOutlineSortAscending className="ml-2" />
               )}
             </Table.HeadCell>
-            <Table.HeadCell className="text-gray-700 font-bold">Fecha</Table.HeadCell>
+            <Table.HeadCell className="text-gray-700 font-bold">
+              Fecha
+            </Table.HeadCell>
           </Table.Head>
           <Table.Body>
             {currentData.map((item: Item, index) => (
