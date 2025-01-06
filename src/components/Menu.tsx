@@ -87,7 +87,6 @@ function Menu() {
   // Cerrar modal
   const handleModalClose = () => {
     setIsModalOpen(false);
-    navigate("/menu")
     
   };
 
@@ -136,7 +135,7 @@ function Menu() {
       })
       .catch((error) => console.error("Error al insertar los datos:", error));
       handleModalClose()
-      
+      window.location.href ="/menu"
   };
 
   // Manejar el cierre de sesión
